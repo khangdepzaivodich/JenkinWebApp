@@ -6,21 +6,35 @@ namespace JenkinWebApp.Controllers
     [Route("[controller]")]
     public class WeatherForecastController : ControllerBase
     {
-        private static readonly string[] Summaries =
-        [
-            "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-        ];
-
         [HttpGet(Name = "GetWeatherForecast")]
         public IEnumerable<WeatherForecast> Get()
         {
-            return Enumerable.Range(1, 5).Select(index => new WeatherForecast
+            return Enumerable.Range(1, 5).Select(index =>
             {
-                Date = DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-                TemperatureC = Random.Shared.Next(-20, 55),
-                Summary = Summaries[Random.Shared.Next(Summaries.Length)]
+                var tempC = Random.Shared.Next(-20, 55);
+
+                return new WeatherForecast
+                {
+                    Date = DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
+                    TemperatureC = tempC,
+                    Summary = GetSummary(tempC) 
+                };
             })
             .ToArray();
+        }
+
+        private string GetSummary(int temperatureC)
+        {
+            if (temperatureC < 0)
+                return "Freezing";
+
+            if (temperatureC < 10)
+                return "Cold";
+
+            if (temperatureC < 25)
+                return "Normal";
+
+            return "Hot";
         }
     }
 }
